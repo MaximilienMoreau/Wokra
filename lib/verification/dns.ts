@@ -1,7 +1,7 @@
 import { resolveTxt } from "node:dns/promises";
 import { randomBytes } from "node:crypto";
 
-const CHALLENGE_SUBDOMAIN = "_proof-verify";
+const CHALLENGE_SUBDOMAIN = "_wokra-verify";
 
 /** Extracts the hostname to challenge from a product URL, or null if invalid. */
 export function parseProductHostname(url: string): string | null {

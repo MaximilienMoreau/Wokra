@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PROOF",
+  title: "Wokra",
   description: "Un réseau professionnel centré sur la preuve par le travail.",
 };
 

@@ -56,7 +56,7 @@ export default async function SignInPage({
     <main id="main-content" className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm space-y-8">
         <div className="space-y-1 text-center">
-          <h1 className="text-2xl font-semibold">Se connecter à PROOF</h1>
+          <h1 className="text-2xl font-semibold">Se connecter à Wokra</h1>
           <p className="text-muted-foreground text-sm">
             Ton profil parle pour toi. Pas de mot de passe.
           </p>

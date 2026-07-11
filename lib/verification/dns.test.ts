@@ -13,7 +13,7 @@ describe("parseProductHostname", () => {
 
 describe("buildChallengeHostname", () => {
   it("prefixes the hostname with the challenge subdomain", () => {
-    expect(buildChallengeHostname("example.com")).toBe("_proof-verify.example.com");
+    expect(buildChallengeHostname("example.com")).toBe("_wokra-verify.example.com");
   });
 });
 

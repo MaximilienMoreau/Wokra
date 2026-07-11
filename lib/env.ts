@@ -8,7 +8,7 @@ const envSchema = z
     AUTH_GITHUB_ID: z.string().optional(),
     AUTH_GITHUB_SECRET: z.string().optional(),
     RESEND_API_KEY: z.string().optional(),
-    EMAIL_FROM: z.string().default("PROOF <onboarding@proof.dev>"),
+    EMAIL_FROM: z.string().default("Wokra <onboarding@wokra.dev>"),
   })
   .refine((data) => Boolean(data.AUTH_GITHUB_ID) === Boolean(data.AUTH_GITHUB_SECRET), {
     message: "AUTH_GITHUB_ID and AUTH_GITHUB_SECRET must be set together",

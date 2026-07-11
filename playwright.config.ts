@@ -30,7 +30,7 @@ export default defineConfig({
       AUTH_GITHUB_ID: "",
       AUTH_GITHUB_SECRET: "",
       RESEND_API_KEY: "",
-      EMAIL_FROM: "PROOF <onboarding@proof.dev>",
+      EMAIL_FROM: "Wokra <onboarding@wokra.dev>",
     },
   },
 });

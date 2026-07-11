@@ -9,7 +9,7 @@ import { test, expect } from "@playwright/test";
 test.describe("sign-in", () => {
   test("renders the sign-in form", async ({ page }) => {
     await page.goto("/sign-in");
-    await expect(page.getByRole("heading", { name: "Se connecter à PROOF" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Se connecter à Wokra" })).toBeVisible();
     await expect(page.getByLabel("Adresse email")).toBeVisible();
   });
 

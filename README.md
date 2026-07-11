@@ -1,4 +1,4 @@
-# PROOF
+# Wokra
 
 Réseau professionnel "proof-of-work" : les profils exposent des artefacts vérifiables (repo, produit
 live, étude de cas) plutôt que des titres ou des métriques de vanité.
