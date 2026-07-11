@@ -6,6 +6,8 @@ import { env } from "@/lib/env";
 import { isAllowed } from "@/lib/rate-limit";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ErrorBanner } from "@/components/ui/error-banner";
 
 const EMAIL_LIMIT = { count: 3, windowMs: 5 * 60_000 };
 
@@ -51,7 +53,7 @@ export default async function SignInPage({
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
+    <main id="main-content" className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm space-y-8">
         <div className="space-y-1 text-center">
           <h1 className="text-2xl font-semibold">Se connecter à PROOF</h1>
@@ -60,11 +62,7 @@ export default async function SignInPage({
           </p>
         </div>
 
-        {error && (
-          <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-            {ERROR_MESSAGES[error] ?? ERROR_MESSAGES.default}
-          </p>
-        )}
+        {error && <ErrorBanner>{ERROR_MESSAGES[error] ?? ERROR_MESSAGES.default}</ErrorBanner>}
 
         {githubEnabled && (
           <form action={signInWithGithub}>
@@ -83,7 +81,17 @@ export default async function SignInPage({
         )}
 
         <form action={signInWithEmail} className="space-y-3">
-          <Input type="email" name="email" placeholder="ton@email.com" required />
+          <Label htmlFor="email" className="sr-only">
+            Adresse email
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            name="email"
+            placeholder="ton@email.com"
+            autoComplete="email"
+            required
+          />
           <Button type="submit" className="w-full" variant="outline">
             Recevoir un lien de connexion
           </Button>

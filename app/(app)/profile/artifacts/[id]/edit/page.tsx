@@ -19,7 +19,7 @@ export default async function EditArtifactPage({ params }: { params: Promise<{ i
   const action = updateArtifactAction.bind(null, artifact.id);
 
   return (
-    <main className="mx-auto max-w-lg space-y-8 px-4 py-12">
+    <main id="main-content" className="mx-auto max-w-lg space-y-8 px-4 py-12">
       <div className="space-y-1">
         <h1 className="text-2xl font-semibold">Modifier l&apos;artefact</h1>
       </div>

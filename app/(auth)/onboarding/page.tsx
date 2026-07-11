@@ -5,6 +5,8 @@ import { RESERVED_HANDLES } from "@/lib/handle";
 import { isHandleTaken, setUserHandle } from "@/lib/data/users";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ErrorBanner } from "@/components/ui/error-banner";
 
 const handleSchema = z
   .string()
@@ -54,7 +56,7 @@ export default async function OnboardingPage({
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
+    <main id="main-content" className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm space-y-6">
         <div className="space-y-1 text-center">
           <h1 className="text-2xl font-semibold">Choisis ton handle</h1>
@@ -63,14 +65,14 @@ export default async function OnboardingPage({
           </p>
         </div>
 
-        {error && (
-          <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-            {ERROR_MESSAGES[error] ?? "Une erreur est survenue."}
-          </p>
-        )}
+        {error && <ErrorBanner>{ERROR_MESSAGES[error] ?? "Une erreur est survenue."}</ErrorBanner>}
 
         <form action={setHandle} className="space-y-3">
+          <Label htmlFor="handle" className="sr-only">
+            Handle
+          </Label>
           <Input
+            id="handle"
             type="text"
             name="handle"
             placeholder="ton-handle"

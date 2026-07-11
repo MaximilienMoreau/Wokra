@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import {
   Select,
   SelectContent,
@@ -41,17 +42,13 @@ export function ArtifactForm({
 
   return (
     <form action={formAction} className="space-y-5">
-      {state?.error && (
-        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {state.error}
-        </p>
-      )}
+      {state?.error && <ErrorBanner>{state.error}</ErrorBanner>}
 
       <div className="space-y-1.5">
         <Label htmlFor="type">Type</Label>
         <Select name="type" defaultValue={defaultValues?.type ?? ArtifactType.REPO}>
           <SelectTrigger id="type" className="w-full">
-            <SelectValue />
+            <SelectValue>{(value: ArtifactType) => TYPE_LABELS[value]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {Object.values(ArtifactType).map((type) => (

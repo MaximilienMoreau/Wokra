@@ -4,6 +4,7 @@ import { FeedItem } from "@/components/feed/feed-item";
 import { ProfileResult } from "@/components/search/profile-result";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 const TYPE_LABELS: Record<ArtifactType, string> = {
   REPO: "Repo",
@@ -33,7 +34,7 @@ export default async function SearchPage({
     : [[], []];
 
   return (
-    <main className="mx-auto max-w-2xl space-y-8 px-4 py-12">
+    <main id="main-content" className="mx-auto max-w-2xl space-y-8 px-4 py-12">
       <div className="space-y-1">
         <h1 className="text-2xl font-semibold">Recherche</h1>
         <p className="text-muted-foreground text-sm">
@@ -43,21 +44,33 @@ export default async function SearchPage({
 
       {/* Native GET form: works without JS, produces a shareable/bookmarkable URL. */}
       <form method="get" className="flex flex-wrap gap-2">
+        <Label htmlFor="q" className="sr-only">
+          Mot-clé
+        </Label>
         <Input
+          id="q"
           type="search"
           name="q"
           defaultValue={q}
           placeholder="React, Rust, PostgreSQL..."
           className="min-w-48 flex-1"
         />
+        <Label htmlFor="skill" className="sr-only">
+          Compétence exacte
+        </Label>
         <Input
+          id="skill"
           type="text"
           name="skill"
           defaultValue={skill}
-          placeholder="Compétence exacte (ex: react)"
+          placeholder="Compétence (ex: react)"
           className="w-48"
         />
+        <Label htmlFor="type" className="sr-only">
+          Type d&apos;artefact
+        </Label>
         <select
+          id="type"
           name="type"
           defaultValue={validType ?? ""}
           className="border-input h-8 rounded-lg border bg-transparent px-2.5 text-sm"

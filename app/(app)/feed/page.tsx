@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth, signOut } from "@/lib/auth";
 import { getFollowedFeed, getDiscoveryFeed } from "@/lib/data/feed";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { FeedItem } from "@/components/feed/feed-item";
 
 export default async function FeedPage() {
@@ -22,8 +22,8 @@ export default async function FeedPage() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl space-y-10 px-4 py-12">
-      <div className="flex items-center justify-between">
+    <main id="main-content" className="mx-auto max-w-2xl space-y-10 px-4 py-12">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-semibold">Salut, {session.user.name}</h1>
           <Link
@@ -33,19 +33,11 @@ export default async function FeedPage() {
             @{session.user.handle}
           </Link>
         </div>
-        <div className="flex gap-2">
-          <Link
-            href={`/profile/${session.user.handle}`}
-            className={buttonVariants({ variant: "outline" })}
-          >
-            Mon profil
-          </Link>
-          <form action={handleSignOut}>
-            <Button type="submit" variant="outline">
-              Se déconnecter
-            </Button>
-          </form>
-        </div>
+        <form action={handleSignOut}>
+          <Button type="submit" variant="outline" size="sm" className="self-start">
+            Se déconnecter
+          </Button>
+        </form>
       </div>
 
       <section className="space-y-4">

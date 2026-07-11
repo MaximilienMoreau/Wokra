@@ -6,6 +6,7 @@ import { isFollowing } from "@/lib/data/follows";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ArtifactCard } from "@/components/profile/artifact-card";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { followAction, unfollowAction } from "@/app/(app)/profile/follow-actions";
 
 export default async function ProfilePage({
@@ -30,12 +31,8 @@ export default async function ProfilePage({
   const following = !isOwner && session?.user ? await isFollowing(session.user.id, user.id) : false;
 
   return (
-    <main className="mx-auto max-w-2xl space-y-8 px-4 py-12">
-      {verifyError && (
-        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {verifyError}
-        </p>
-      )}
+    <main id="main-content" className="mx-auto max-w-2xl space-y-8 px-4 py-12">
+      {verifyError && <ErrorBanner>{verifyError}</ErrorBanner>}
 
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2">

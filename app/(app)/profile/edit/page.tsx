@@ -15,7 +15,7 @@ export default async function EditProfilePage() {
   }
 
   return (
-    <main className="mx-auto max-w-lg space-y-8 px-4 py-12">
+    <main id="main-content" className="mx-auto max-w-lg space-y-8 px-4 py-12">
       <div className="space-y-1">
         <h1 className="text-2xl font-semibold">Modifier ton profil</h1>
         <p className="text-muted-foreground text-sm">

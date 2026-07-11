@@ -13,7 +13,7 @@ export default async function MessagesPage() {
   const conversations = await getConversations(session.user.id);
 
   return (
-    <main className="mx-auto max-w-2xl space-y-6 px-4 py-12">
+    <main id="main-content" className="mx-auto max-w-2xl space-y-6 px-4 py-12">
       <h1 className="text-2xl font-semibold">Messages</h1>
 
       {conversations.length === 0 ? (

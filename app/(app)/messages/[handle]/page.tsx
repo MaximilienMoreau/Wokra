@@ -6,6 +6,8 @@ import { getConversationMessages, markConversationRead } from "@/lib/data/messag
 import { sendMessageAction } from "@/app/(app)/messages/actions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { ErrorBanner } from "@/components/ui/error-banner";
 
 const ERROR_MESSAGES: Record<string, string> = {
   "rate-limited": "Trop de messages envoyés d'un coup — attends une minute et réessaie.",
@@ -39,7 +41,7 @@ export default async function ConversationPage({
   const send = sendMessageAction.bind(null, handle);
 
   return (
-    <main className="mx-auto flex max-w-2xl flex-col gap-6 px-4 py-12">
+    <main id="main-content" className="mx-auto flex max-w-2xl flex-col gap-6 px-4 py-12">
       <div className="space-y-1">
         <Link href="/messages" className="text-muted-foreground text-sm hover:underline">
           &larr; Messages
@@ -51,11 +53,7 @@ export default async function ConversationPage({
         </h1>
       </div>
 
-      {error && (
-        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {ERROR_MESSAGES[error] ?? "Une erreur est survenue."}
-        </p>
-      )}
+      {error && <ErrorBanner>{ERROR_MESSAGES[error] ?? "Une erreur est survenue."}</ErrorBanner>}
 
       <div className="space-y-3">
         {messages.length === 0 ? (
@@ -89,7 +87,11 @@ export default async function ConversationPage({
       </div>
 
       <form action={send} className="flex gap-2">
+        <Label htmlFor="body" className="sr-only">
+          Message
+        </Label>
         <Textarea
+          id="body"
           name="body"
           placeholder={`Écrire à ${partner.name}...`}
           required
