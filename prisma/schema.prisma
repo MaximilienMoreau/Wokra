@@ -19,15 +19,18 @@ enum VerificationMethod {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  handle    String   @unique
-  name      String
-  email     String   @unique
-  avatarUrl String?
-  bio       String?
-  githubId  String?  @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String    @id @default(cuid())
+  handle        String?   @unique
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  bio           String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
 
   skills    UserSkill[]
   interests Interest[]
@@ -38,6 +41,45 @@ model User {
 
   sentMessages     Message[] @relation("Sender")
   receivedMessages Message[] @relation("Receiver")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 
 model Skill {

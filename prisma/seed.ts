@@ -126,18 +126,29 @@ async function main() {
       const interestPool = skills.filter((s) => !userSkills.includes(s));
       const userInterests = pickMany(interestPool, faker.number.int({ min: 2, max: 4 }));
 
+      const hasGithubAccount = faker.datatype.boolean(0.7);
+
       return prisma.user.create({
         data: {
           handle,
           name: `${firstName} ${lastName}`,
           email: faker.internet.email({ firstName, lastName }).toLowerCase(),
-          avatarUrl: faker.image.avatarGitHub(),
+          emailVerified: faker.date.past({ years: 2 }),
+          image: faker.image.avatarGitHub(),
           bio: generateBio(),
-          githubId: faker.datatype.boolean(0.7) ? faker.string.numeric(8) : null,
           skills: { create: userSkills.map((skill) => ({ skillId: skill.id })) },
           interests: {
             create: userInterests.map((skill) => ({ skillId: skill.id })),
           },
+          accounts: hasGithubAccount
+            ? {
+                create: {
+                  type: "oauth",
+                  provider: "github",
+                  providerAccountId: faker.string.numeric(8),
+                },
+              }
+            : undefined,
         },
       });
     }),

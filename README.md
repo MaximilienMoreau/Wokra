@@ -37,10 +37,21 @@ npm run db:studio     # explorateur de données Prisma Studio
 
 Un hook pre-commit (Husky + lint-staged) lance automatiquement lint + typecheck avant chaque commit.
 
+## Auth
+
+- **Magic link** : fonctionne sans configuration en dev — le lien est affiché dans les logs du
+  serveur (`RESEND_API_KEY` vide). En production, définir `RESEND_API_KEY` (resend.com/api-keys).
+- **GitHub OAuth** : optionnel en dev (le bouton "Continuer avec GitHub" n'apparaît que si
+  configuré). Créer une [OAuth App GitHub](https://github.com/settings/developers) avec pour
+  callback URL `http://localhost:3000/api/auth/callback/github`, puis renseigner
+  `AUTH_GITHUB_ID`/`AUTH_GITHUB_SECRET` dans `.env`.
+- `AUTH_SECRET` : générer avec `openssl rand -base64 33`.
+
 ## Structure
 
 ```
-app/(auth)/          # routes d'authentification
+app/(auth)/sign-in/    # connexion (GitHub OAuth + magic link)
+app/(auth)/onboarding/ # choix du handle (filet de sécurité, normalement auto-généré)
 app/(app)/profile/    # profil : bio, compétences, artefacts
 app/(app)/feed/        # feed suivis + découverte
 app/(app)/search/      # recherche full-text
@@ -48,6 +59,9 @@ app/(app)/messages/    # messagerie 1-1
 lib/data/              # accès Prisma (aucune requête DB hors de ce dossier)
 lib/env.ts             # variables d'environnement validées par Zod
 lib/prisma.ts           # client Prisma (singleton, driver adapter pg)
+lib/auth.ts             # config Auth.js (providers, adapter, callbacks)
+lib/handle.ts           # génération du handle unique à l'inscription
+middleware.ts           # protection des routes + redirection onboarding
 components/ui/         # composants shadcn/ui
 components/<domaine>/  # composants métier par domaine
 prisma/schema.prisma    # modèle de données
