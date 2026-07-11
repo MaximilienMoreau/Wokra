@@ -3,11 +3,15 @@ import { AuthError } from "next-auth";
 import { z } from "zod";
 import { signIn } from "@/lib/auth";
 import { env } from "@/lib/env";
+import { isAllowed } from "@/lib/rate-limit";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+const EMAIL_LIMIT = { count: 3, windowMs: 5 * 60_000 };
+
 const ERROR_MESSAGES: Record<string, string> = {
   "invalid-email": "Adresse email invalide.",
+  "rate-limited": "Trop de tentatives. Réessaie dans quelques minutes.",
   default: "Impossible de vous connecter. Réessaie.",
 };
 
@@ -30,6 +34,10 @@ export default async function SignInPage({
     const parsed = z.email().safeParse(formData.get("email"));
     if (!parsed.success) {
       redirect(`/sign-in?error=invalid-email`);
+    }
+
+    if (!isAllowed(`magic-link:${parsed.data}`, EMAIL_LIMIT.count, EMAIL_LIMIT.windowMs)) {
+      redirect(`/sign-in?error=rate-limited`);
     }
 
     try {

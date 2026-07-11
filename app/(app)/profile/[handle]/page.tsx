@@ -71,18 +71,30 @@ export default async function ProfilePage({
         )}
 
         {!isOwner && session?.user && (
-          <form
-            action={
-              following
-                ? unfollowAction.bind(null, user.id, user.handle!)
-                : followAction.bind(null, user.id, user.handle!)
-            }
-            className="shrink-0"
-          >
-            <Button type="submit" variant={following ? "outline" : "default"} size="sm">
-              {following ? "Ne plus suivre" : "Suivre"}
-            </Button>
-          </form>
+          <div className="flex shrink-0 flex-col gap-2">
+            <form
+              action={
+                following
+                  ? unfollowAction.bind(null, user.id, user.handle!)
+                  : followAction.bind(null, user.id, user.handle!)
+              }
+            >
+              <Button
+                type="submit"
+                variant={following ? "outline" : "default"}
+                size="sm"
+                className="w-full"
+              >
+                {following ? "Ne plus suivre" : "Suivre"}
+              </Button>
+            </form>
+            <Link
+              href={`/messages/${user.handle}`}
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
+              Message
+            </Link>
+          </div>
         )}
       </div>
 
