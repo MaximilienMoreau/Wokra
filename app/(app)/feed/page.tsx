@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth, signOut } from "@/lib/auth";
+import { getFollowedFeed, getDiscoveryFeed } from "@/lib/data/feed";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { FeedItem } from "@/components/feed/feed-item";
 
 export default async function FeedPage() {
   const session = await auth();
@@ -9,13 +11,18 @@ export default async function FeedPage() {
     redirect("/sign-in");
   }
 
+  const [followedFeed, discoveryFeed] = await Promise.all([
+    getFollowedFeed(session.user.id),
+    getDiscoveryFeed(session.user.id),
+  ]);
+
   async function handleSignOut() {
     "use server";
     await signOut({ redirectTo: "/sign-in" });
   }
 
   return (
-    <main className="mx-auto max-w-2xl space-y-6 px-4 py-12">
+    <main className="mx-auto max-w-2xl space-y-10 px-4 py-12">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">Salut, {session.user.name}</h1>
@@ -40,9 +47,44 @@ export default async function FeedPage() {
           </form>
         </div>
       </div>
-      <p className="text-muted-foreground text-sm">
-        Le feed (artefacts des profils suivis + découverte par tags) arrive au milestone 6.
-      </p>
+
+      <section className="space-y-4">
+        <h2 className="text-muted-foreground text-sm font-medium tracking-wide uppercase">
+          Suivis
+        </h2>
+        {followedFeed.length === 0 ? (
+          <p className="text-muted-foreground text-sm">
+            Tu ne suis personne pour l&apos;instant. Découvre des profils ci-dessous.
+          </p>
+        ) : (
+          <div className="space-y-6">
+            {followedFeed.map((artifact) => (
+              <FeedItem key={artifact.id} artifact={artifact} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-muted-foreground text-sm font-medium tracking-wide uppercase">
+          Découverte
+        </h2>
+        {discoveryFeed.length === 0 ? (
+          <p className="text-muted-foreground text-sm">
+            {"Ajoute des centres d'intérêt à "}
+            <Link href="/profile/edit" className="underline">
+              ton profil
+            </Link>
+            {" pour voir des artefacts pertinents ici."}
+          </p>
+        ) : (
+          <div className="space-y-6">
+            {discoveryFeed.map((artifact) => (
+              <FeedItem key={artifact.id} artifact={artifact} />
+            ))}
+          </div>
+        )}
+      </section>
     </main>
   );
 }

@@ -2,9 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getUserByHandle } from "@/lib/data/users";
+import { isFollowing } from "@/lib/data/follows";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { ArtifactCard } from "@/components/profile/artifact-card";
+import { followAction, unfollowAction } from "@/app/(app)/profile/follow-actions";
 
 export default async function ProfilePage({
   params,
@@ -25,6 +27,7 @@ export default async function ProfilePage({
   }
 
   const isOwner = session?.user?.id === user.id;
+  const following = !isOwner && session?.user ? await isFollowing(session.user.id, user.id) : false;
 
   return (
     <main className="mx-auto max-w-2xl space-y-8 px-4 py-12">
@@ -65,6 +68,21 @@ export default async function ProfilePage({
               Ajouter un artefact
             </Link>
           </div>
+        )}
+
+        {!isOwner && session?.user && (
+          <form
+            action={
+              following
+                ? unfollowAction.bind(null, user.id, user.handle!)
+                : followAction.bind(null, user.id, user.handle!)
+            }
+            className="shrink-0"
+          >
+            <Button type="submit" variant={following ? "outline" : "default"} size="sm">
+              {following ? "Ne plus suivre" : "Suivre"}
+            </Button>
+          </form>
         )}
       </div>
 
