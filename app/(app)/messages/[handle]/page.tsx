@@ -39,6 +39,7 @@ export default async function ConversationPage({
   await markConversationRead(session.user.id, partner.id);
   const messages = await getConversationMessages(session.user.id, partner.id);
   const send = sendMessageAction.bind(null, handle);
+  const partnerName = partner.name ?? `@${partner.handle}`;
 
   return (
     <main id="main-content" className="mx-auto flex max-w-2xl flex-col gap-6 px-4 py-12">
@@ -48,7 +49,7 @@ export default async function ConversationPage({
         </Link>
         <h1 className="text-xl font-semibold">
           <Link href={`/profile/${partner.handle}`} className="hover:underline">
-            {partner.name}
+            {partnerName}
           </Link>
         </h1>
       </div>
@@ -58,7 +59,7 @@ export default async function ConversationPage({
       <div className="space-y-3">
         {messages.length === 0 ? (
           <p className="text-muted-foreground text-sm">
-            Aucun message avec {partner.name} pour l&apos;instant.
+            Aucun message avec {partnerName} pour l&apos;instant.
           </p>
         ) : (
           messages.map((message) => {
@@ -93,7 +94,7 @@ export default async function ConversationPage({
         <Textarea
           id="body"
           name="body"
-          placeholder={`Écrire à ${partner.name}...`}
+          placeholder={`Écrire à ${partnerName}...`}
           required
           rows={2}
           className="flex-1"

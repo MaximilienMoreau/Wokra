@@ -36,9 +36,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   events: {
     async createUser({ user }) {
-      const base = user.name ?? user.email?.split("@")[0] ?? "user";
-      const handle = await generateUniqueHandle(base);
-      await prisma.user.update({ where: { id: user.id }, data: { handle } });
+      // The Email/magic-link provider never supplies a name (unlike GitHub
+      // OAuth), so User.name is nullable at the DB level — backfill it here
+      // the same way we backfill handle.
+      const emailLocalPart = user.email?.split("@")[0];
+      const handle = await generateUniqueHandle(user.name ?? emailLocalPart ?? "user");
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { handle, name: user.name ?? emailLocalPart ?? "New user" },
+      });
     },
   },
   callbacks: {

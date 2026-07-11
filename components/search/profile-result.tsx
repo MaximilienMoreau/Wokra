@@ -4,7 +4,7 @@ import Link from "next/link";
 export function ProfileResult({
   user,
 }: {
-  user: { handle: string; name: string; bio: string | null; image: string | null };
+  user: { handle: string; name: string | null; bio: string | null; image: string | null };
 }) {
   return (
     <Link
@@ -17,7 +17,7 @@ export function ProfileResult({
         <span className="bg-muted size-10 shrink-0 rounded-full" />
       )}
       <div className="min-w-0">
-        <p className="font-medium">{user.name}</p>
+        <p className="font-medium">{user.name ?? `@${user.handle}`}</p>
         <p className="text-muted-foreground text-sm">@{user.handle}</p>
         {user.bio && <p className="text-muted-foreground mt-1 truncate text-sm">{user.bio}</p>}
       </div>

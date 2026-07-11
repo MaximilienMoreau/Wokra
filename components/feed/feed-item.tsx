@@ -15,7 +15,7 @@ export function FeedItem({
     stack: string[];
     verified: boolean;
     verificationToken: string | null;
-    user: { handle: string | null; name: string; image: string | null };
+    user: { handle: string | null; name: string | null; image: string | null };
   };
 }) {
   const { user } = artifact;
@@ -29,7 +29,7 @@ export function FeedItem({
         ) : (
           <span className="bg-muted size-6 rounded-full" />
         )}
-        <span className="font-medium">{user.name}</span>
+        <span className="font-medium">{user.name ?? `@${user.handle}`}</span>
         <span className="text-muted-foreground">@{user.handle}</span>
       </Link>
       <ArtifactCard artifact={artifact} isOwner={false} />

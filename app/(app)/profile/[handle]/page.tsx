@@ -36,7 +36,7 @@ export default async function ProfilePage({
 
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2">
-          <h1 className="text-2xl font-semibold">{user.name}</h1>
+          <h1 className="text-2xl font-semibold">{user.name ?? `@${user.handle}`}</h1>
           <p className="text-muted-foreground text-sm">@{user.handle}</p>
           {user.bio && <p className="text-sm leading-relaxed">{user.bio}</p>}
           {user.skills.length > 0 && (

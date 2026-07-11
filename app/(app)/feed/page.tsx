@@ -25,7 +25,9 @@ export default async function FeedPage() {
     <main id="main-content" className="mx-auto max-w-2xl space-y-10 px-4 py-12">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-xl font-semibold">Salut, {session.user.name}</h1>
+          <h1 className="text-xl font-semibold">
+            Salut, {session.user.name ?? session.user.handle}
+          </h1>
           <Link
             href={`/profile/${session.user.handle}`}
             className="text-muted-foreground text-sm hover:underline"

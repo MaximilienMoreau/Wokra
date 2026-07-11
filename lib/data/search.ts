@@ -10,7 +10,7 @@ export type ArtifactSearchResult = {
   stack: string[];
   verified: boolean;
   handle: string;
-  name: string;
+  name: string | null;
   image: string | null;
 };
 
@@ -51,7 +51,7 @@ export async function searchArtifacts(params: {
 export type UserSearchResult = {
   id: string;
   handle: string;
-  name: string;
+  name: string | null;
   bio: string | null;
   image: string | null;
 };

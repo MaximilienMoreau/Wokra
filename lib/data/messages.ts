@@ -29,7 +29,7 @@ export async function getConversations(userId: string): Promise<ConversationSumm
         partner: {
           id: partner.id,
           handle: partner.handle,
-          name: partner.name,
+          name: partner.name ?? `@${partner.handle}`,
           image: partner.image,
         },
         lastMessage: {
