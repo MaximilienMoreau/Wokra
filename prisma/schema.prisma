@@ -122,6 +122,8 @@ model Artifact {
   verified    Boolean             @default(false)
   verifiedVia VerificationMethod?
   verifiedAt  DateTime?
+  // DNS TXT challenge in progress; cleared once verified.
+  verificationToken String?
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
 

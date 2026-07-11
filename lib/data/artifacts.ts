@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import type { ArtifactType } from "@prisma/client";
+import type { ArtifactType, VerificationMethod } from "@prisma/client";
 
 export function getArtifactById(id: string) {
   return prisma.artifact.findUnique({ where: { id } });
@@ -23,4 +23,15 @@ export function updateArtifact(id: string, data: ArtifactInput) {
 
 export function deleteArtifact(id: string) {
   return prisma.artifact.delete({ where: { id } });
+}
+
+export function setArtifactVerificationToken(id: string, token: string) {
+  return prisma.artifact.update({ where: { id }, data: { verificationToken: token } });
+}
+
+export function markArtifactVerified(id: string, via: VerificationMethod) {
+  return prisma.artifact.update({
+    where: { id },
+    data: { verified: true, verifiedVia: via, verifiedAt: new Date(), verificationToken: null },
+  });
 }

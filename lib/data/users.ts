@@ -23,3 +23,12 @@ export function setUserHandle(userId: string, handle: string) {
 export function updateUserBio(userId: string, bio: string | null) {
   return prisma.user.update({ where: { id: userId }, data: { bio } });
 }
+
+/** The user's numeric GitHub account id (Account.providerAccountId), or null if not linked. */
+export async function getGithubAccountId(userId: string): Promise<string | null> {
+  const account = await prisma.account.findFirst({
+    where: { userId, provider: "github" },
+    select: { providerAccountId: true },
+  });
+  return account?.providerAccountId ?? null;
+}

@@ -6,9 +6,19 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { ArtifactCard } from "@/components/profile/artifact-card";
 
-export default async function ProfilePage({ params }: { params: Promise<{ handle: string }> }) {
+export default async function ProfilePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ handle: string }>;
+  searchParams: Promise<{ verifyError?: string }>;
+}) {
   const { handle } = await params;
-  const [user, session] = await Promise.all([getUserByHandle(handle), auth()]);
+  const [user, session, { verifyError }] = await Promise.all([
+    getUserByHandle(handle),
+    auth(),
+    searchParams,
+  ]);
 
   if (!user) {
     notFound();
@@ -18,6 +28,12 @@ export default async function ProfilePage({ params }: { params: Promise<{ handle
 
   return (
     <main className="mx-auto max-w-2xl space-y-8 px-4 py-12">
+      {verifyError && (
+        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          {verifyError}
+        </p>
+      )}
+
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold">{user.name}</h1>
