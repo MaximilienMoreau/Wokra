@@ -1,24 +1,25 @@
 import { prisma } from "@/lib/prisma";
+import { slugify } from "@/lib/slug";
 
-const COMBINING_MARK_RANGE = { start: 0x0300, end: 0x036f };
-
-function stripDiacritics(input: string): string {
-  return Array.from(input.normalize("NFD"))
-    .filter((char) => {
-      const code = char.codePointAt(0) ?? 0;
-      return code < COMBINING_MARK_RANGE.start || code > COMBINING_MARK_RANGE.end;
-    })
-    .join("");
-}
+// First path segment after /profile/ that must not be claimable as a handle,
+// since it would collide with an app route (e.g. /profile/edit).
+export const RESERVED_HANDLES = new Set([
+  "edit",
+  "artifacts",
+  "new",
+  "settings",
+  "api",
+  "sign-in",
+  "onboarding",
+  "feed",
+  "search",
+  "messages",
+  "user",
+]);
 
 export function slugifyHandle(input: string): string {
-  const slug = stripDiacritics(input)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 30);
-
-  return slug || "user";
+  const slug = slugify(input, 30);
+  return slug && !RESERVED_HANDLES.has(slug) ? slug : "user";
 }
 
 export async function generateUniqueHandle(base: string): Promise<string> {

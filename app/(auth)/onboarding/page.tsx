@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { RESERVED_HANDLES } from "@/lib/handle";
+import { isHandleTaken, setUserHandle } from "@/lib/data/users";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -9,7 +10,8 @@ const handleSchema = z
   .string()
   .min(3, "3 caractères minimum.")
   .max(30, "30 caractères maximum.")
-  .regex(/^[a-z0-9-]+$/, "Lettres minuscules, chiffres et tirets uniquement.");
+  .regex(/^[a-z0-9-]+$/, "Lettres minuscules, chiffres et tirets uniquement.")
+  .refine((handle) => !RESERVED_HANDLES.has(handle), "Ce handle est réservé.");
 
 const ERROR_MESSAGES: Record<string, string> = {
   invalid: "Format invalide : lettres minuscules, chiffres et tirets uniquement (3-30 caractères).",
@@ -43,15 +45,11 @@ export default async function OnboardingPage({
       redirect("/onboarding?error=invalid");
     }
 
-    const existing = await prisma.user.findUnique({ where: { handle: parsed.data } });
-    if (existing && existing.id !== currentSession.user.id) {
+    if (await isHandleTaken(parsed.data, currentSession.user.id)) {
       redirect("/onboarding?error=taken");
     }
 
-    await prisma.user.update({
-      where: { id: currentSession.user.id },
-      data: { handle: parsed.data },
-    });
+    await setUserHandle(currentSession.user.id, parsed.data);
     redirect("/feed");
   }
 

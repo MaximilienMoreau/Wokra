@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 
-const PROTECTED_PREFIXES = ["/profile", "/feed", "/search", "/messages"];
+// /profile/[handle] itself is a public read view (profils ouverts) — only the
+// mutation routes underneath it require a session.
+const PROTECTED_PREFIXES = ["/profile/edit", "/profile/artifacts", "/feed", "/search", "/messages"];
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;

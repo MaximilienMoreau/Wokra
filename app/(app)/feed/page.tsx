@@ -1,6 +1,7 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth, signOut } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 export default async function FeedPage() {
   const session = await auth();
@@ -18,13 +19,26 @@ export default async function FeedPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">Salut, {session.user.name}</h1>
-          <p className="text-muted-foreground text-sm">@{session.user.handle}</p>
+          <Link
+            href={`/profile/${session.user.handle}`}
+            className="text-muted-foreground text-sm hover:underline"
+          >
+            @{session.user.handle}
+          </Link>
         </div>
-        <form action={handleSignOut}>
-          <Button type="submit" variant="outline">
-            Se déconnecter
-          </Button>
-        </form>
+        <div className="flex gap-2">
+          <Link
+            href={`/profile/${session.user.handle}`}
+            className={buttonVariants({ variant: "outline" })}
+          >
+            Mon profil
+          </Link>
+          <form action={handleSignOut}>
+            <Button type="submit" variant="outline">
+              Se déconnecter
+            </Button>
+          </form>
+        </div>
       </div>
       <p className="text-muted-foreground text-sm">
         Le feed (artefacts des profils suivis + découverte par tags) arrive au milestone 6.
