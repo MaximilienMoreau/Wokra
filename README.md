@@ -33,9 +33,20 @@ npm test              # Vitest
 npm run db:migrate    # migrations Prisma (dev)
 npm run db:seed       # rejoue le seed
 npm run db:studio     # explorateur de données Prisma Studio
+npm run test:e2e      # tests e2e Playwright
 ```
 
 Un hook pre-commit (Husky + lint-staged) lance automatiquement lint + typecheck avant chaque commit.
+
+## Tests e2e
+
+`npm run test:e2e` lance Playwright sur une base dédiée (`proof_test`, créée une fois avec
+`createdb -O proof proof_test`) — jamais sur la base de dev. Le auth flow réel (GitHub OAuth, email)
+n'est pas pilotable en automatisé sans vraies identifiants ; les tests créent une session
+directement en base plutôt que de simuler le provider. Un test dédié (`sign-in.spec.ts`) vérifie
+quand même le vrai formulaire magic link de bout en bout (jusqu'à la page de confirmation).
+`main-flow.spec.ts` couvre créer un artefact → vérifier via l'API GitHub réelle → apparaître dans le
+feed d'un follower — nécessite un accès réseau à `api.github.com`.
 
 ## Auth
 
@@ -66,6 +77,7 @@ components/ui/         # composants shadcn/ui
 components/<domaine>/  # composants métier par domaine
 prisma/schema.prisma    # modèle de données
 prisma/seed.ts          # seed réaliste (profils, artefacts, skills, follows, messages)
+e2e/                     # tests Playwright (base de test dédiée, voir "Tests e2e")
 ```
 
 ## Docker
