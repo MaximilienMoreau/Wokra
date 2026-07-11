@@ -29,6 +29,9 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  // Generated column (name + handle + bio), maintained by Postgres — see migration SQL.
+  searchVector Unsupported("tsvector")?
+
   accounts Account[]
   sessions Session[]
 
@@ -126,6 +129,9 @@ model Artifact {
   verificationToken String?
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
+
+  // Generated column (title + description + stack + type), maintained by Postgres — see migration SQL.
+  searchVector Unsupported("tsvector")?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
