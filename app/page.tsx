@@ -1,7 +1,20 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import "./marketing.css";
+
+const title = "Wokra — Montre ton travail. Pas ton pitch.";
+const description =
+  "Un réseau professionnel où le profil se construit à partir de ce que tu as réellement livré — un dépôt, un produit en ligne, une étude de cas — jamais d'adjectifs.";
+
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: { canonical: "/" },
+  openGraph: { title, description, url: "/" },
+  twitter: { title, description },
+};
 
 export default async function Home() {
   const session = await auth();

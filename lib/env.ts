@@ -3,6 +3,7 @@ import { z } from "zod";
 const envSchema = z
   .object({
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+    SITE_URL: z.url().default("http://localhost:3000"),
     DATABASE_URL: z.url(),
     AUTH_SECRET: z.string().min(1),
     AUTH_GITHUB_ID: z.string().optional(),
