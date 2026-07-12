@@ -9,6 +9,9 @@ const envSchema = z
     AUTH_GITHUB_SECRET: z.string().optional(),
     RESEND_API_KEY: z.string().optional(),
     EMAIL_FROM: z.string().default("Wokra <onboarding@wokra.dev>"),
+    // Vercel Blob (vercel.com/docs/storage/vercel-blob) — post image uploads.
+    // Optional in dev: leave empty and the image field is disabled in the compose form.
+    BLOB_READ_WRITE_TOKEN: z.string().optional(),
   })
   .refine((data) => Boolean(data.AUTH_GITHUB_ID) === Boolean(data.AUTH_GITHUB_SECRET), {
     message: "AUTH_GITHUB_ID and AUTH_GITHUB_SECRET must be set together",

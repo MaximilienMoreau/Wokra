@@ -1,24 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { ArtifactType } from "@prisma/client";
+import type { FeedEntry } from "@/lib/data/feed";
 import { ArtifactCard } from "@/components/profile/artifact-card";
+import { PostCard } from "@/components/posts/post-card";
 
 export function FeedItem({
-  artifact,
+  entry,
+  viewerId,
+  pathname,
 }: {
-  artifact: {
-    id: string;
-    type: ArtifactType;
-    title: string;
-    description: string;
-    url: string;
-    stack: string[];
-    verified: boolean;
-    verificationToken: string | null;
-    user: { handle: string | null; name: string | null; image: string | null };
-  };
+  entry: FeedEntry;
+  viewerId: string;
+  pathname: string;
 }) {
-  const { user } = artifact;
+  const user = entry.kind === "artifact" ? entry.artifact.user : entry.post.author;
   if (!user.handle) return null;
 
   return (
@@ -32,7 +27,16 @@ export function FeedItem({
         <span className="font-medium">{user.name ?? `@${user.handle}`}</span>
         <span className="text-muted-foreground">@{user.handle}</span>
       </Link>
-      <ArtifactCard artifact={artifact} isOwner={false} />
+      {entry.kind === "artifact" ? (
+        <ArtifactCard artifact={entry.artifact} isOwner={false} />
+      ) : (
+        <PostCard
+          post={entry.post}
+          viewerId={viewerId}
+          pathname={pathname}
+          isOwner={entry.post.authorId === viewerId}
+        />
+      )}
     </div>
   );
 }

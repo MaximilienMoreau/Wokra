@@ -1,4 +1,4 @@
-import { PrismaClient, ArtifactType, VerificationMethod } from "@prisma/client";
+import { PrismaClient, ArtifactType, VerificationMethod, NotificationType } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { faker } from "@faker-js/faker";
 
@@ -102,7 +102,40 @@ function pickMany<T>(items: T[], count: number): T[] {
   return faker.helpers.arrayElements(items, count);
 }
 
+const POST_INTROS = [
+  "Petit retour d'expérience :",
+  "Content de partager ça :",
+  "Update de la semaine :",
+  "Une leçon apprise récemment :",
+  "En ce moment je bosse sur :",
+];
+
+const LINK_PREVIEWS = [
+  {
+    url: "https://increment.com/reliability/",
+    title: "Reliability - Increment",
+    description: "Un numéro sur la façon dont les équipes maintiennent des systèmes complexes.",
+    imageUrl: "https://picsum.photos/seed/increment-reliability/640/360",
+  },
+  {
+    url: "https://stackoverflow.blog/",
+    title: "The Stack Overflow Blog",
+    description: "Essais et réflexions sur la pratique de l'ingénierie logicielle.",
+    imageUrl: "https://picsum.photos/seed/stackoverflow-blog/640/360",
+  },
+  {
+    url: "https://www.joelonsoftware.com/",
+    title: "Joel on Software",
+    description: "Gestion logicielle sans douleur, par quelqu'un qui est passé par là.",
+    imageUrl: "https://picsum.photos/seed/joel-on-software/640/360",
+  },
+];
+
 async function main() {
+  await prisma.notification.deleteMany();
+  await prisma.comment.deleteMany();
+  await prisma.like.deleteMany();
+  await prisma.post.deleteMany();
   await prisma.message.deleteMany();
   await prisma.follow.deleteMany();
   await prisma.artifact.deleteMany();
@@ -156,6 +189,7 @@ async function main() {
 
   const artifactTypes = Object.values(ArtifactType);
   const targetArtifactCount = 40;
+  const createdArtifacts: { id: string; userId: string }[] = [];
 
   for (let i = 0; i < targetArtifactCount; i++) {
     const user = faker.helpers.arrayElement(users);
@@ -164,7 +198,7 @@ async function main() {
     const isVerifiable = type === ArtifactType.REPO || type === ArtifactType.PRODUCT;
     const verified = isVerifiable && faker.datatype.boolean(0.5);
 
-    await prisma.artifact.create({
+    const artifact = await prisma.artifact.create({
       data: {
         userId: user.id,
         type,
@@ -187,6 +221,74 @@ async function main() {
         verifiedAt: verified ? faker.date.recent({ days: 90 }) : null,
       },
     });
+    createdArtifacts.push({ id: artifact.id, userId: artifact.userId });
+  }
+
+  const targetPostCount = 30;
+  const createdPosts: { id: string; authorId: string }[] = [];
+
+  for (let i = 0; i < targetPostCount; i++) {
+    const author = faker.helpers.arrayElement(users);
+    const variant = faker.helpers.arrayElement(["text", "text", "artifact", "link"] as const);
+    const body = `${faker.helpers.arrayElement(POST_INTROS)} ${faker.lorem.sentences(2)}`;
+
+    const attachment =
+      variant === "artifact"
+        ? { sharedArtifactId: faker.helpers.arrayElement(createdArtifacts).id }
+        : variant === "link"
+          ? (() => {
+              const preview = faker.helpers.arrayElement(LINK_PREVIEWS);
+              return {
+                linkUrl: preview.url,
+                linkTitle: preview.title,
+                linkDescription: preview.description,
+                linkImageUrl: preview.imageUrl,
+              };
+            })()
+          : {};
+
+    const post = await prisma.post.create({
+      data: { authorId: author.id, body, ...attachment },
+    });
+    createdPosts.push({ id: post.id, authorId: post.authorId });
+  }
+
+  const notificationsToCreate: {
+    recipientId: string;
+    actorId: string;
+    type: NotificationType;
+    postId?: string;
+  }[] = [];
+
+  for (const post of createdPosts) {
+    const potentialLikers = users.filter((u) => u.id !== post.authorId);
+    const likers = pickMany(potentialLikers, faker.number.int({ min: 0, max: 6 }));
+    if (likers.length > 0) {
+      await prisma.like.createMany({
+        data: likers.map((liker) => ({ userId: liker.id, postId: post.id })),
+      });
+      for (const liker of likers) {
+        notificationsToCreate.push({
+          recipientId: post.authorId,
+          actorId: liker.id,
+          type: NotificationType.POST_LIKE,
+          postId: post.id,
+        });
+      }
+    }
+
+    const commenters = pickMany(potentialLikers, faker.number.int({ min: 0, max: 3 }));
+    for (const commenter of commenters) {
+      await prisma.comment.create({
+        data: { postId: post.id, authorId: commenter.id, body: faker.lorem.sentence() },
+      });
+      notificationsToCreate.push({
+        recipientId: post.authorId,
+        actorId: commenter.id,
+        type: NotificationType.POST_COMMENT,
+        postId: post.id,
+      });
+    }
   }
 
   for (const follower of users) {
@@ -199,6 +301,19 @@ async function main() {
       })),
       skipDuplicates: true,
     });
+  }
+
+  const followsForNotifications = await prisma.follow.findMany({ take: 20 });
+  for (const { followerId, followingId } of followsForNotifications) {
+    notificationsToCreate.push({
+      recipientId: followingId,
+      actorId: followerId,
+      type: NotificationType.FOLLOW,
+    });
+  }
+
+  if (notificationsToCreate.length > 0) {
+    await prisma.notification.createMany({ data: notificationsToCreate });
   }
 
   const follows = await prisma.follow.findMany({ take: 8 });
@@ -219,7 +334,8 @@ async function main() {
   }
 
   console.log(
-    `Seeded ${users.length} users, ${skills.length} skills, ${targetArtifactCount} artifacts.`,
+    `Seeded ${users.length} users, ${skills.length} skills, ${targetArtifactCount} artifacts, ` +
+      `${targetPostCount} posts, ${notificationsToCreate.length} notifications.`,
   );
 }
 
