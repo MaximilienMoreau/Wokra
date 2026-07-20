@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { auth, signOut } from "@/lib/auth";
-import { getFollowedFeed, getDiscoveryFeed } from "@/lib/data/feed";
-import { Button } from "@/components/ui/button";
+import { auth } from "@/lib/auth";
+import { getFollowedFeed, getDiscoveryFeed, type FeedEntry } from "@/lib/data/feed";
+import { buttonVariants } from "@/components/ui/button";
 import { FeedItem } from "@/components/feed/feed-item";
+
+function entryKey(entry: FeedEntry) {
+  return entry.kind === "artifact" ? `artifact-${entry.artifact.id}` : `post-${entry.post.id}`;
+}
 
 export default async function FeedPage() {
   const session = await auth();
@@ -15,11 +19,6 @@ export default async function FeedPage() {
     getFollowedFeed(session.user.id),
     getDiscoveryFeed(session.user.id),
   ]);
-
-  async function handleSignOut() {
-    "use server";
-    await signOut({ redirectTo: "/sign-in" });
-  }
 
   return (
     <main id="main-content" className="mx-auto max-w-2xl space-y-10 px-4 py-12">
@@ -35,11 +34,9 @@ export default async function FeedPage() {
             @{session.user.handle}
           </Link>
         </div>
-        <form action={handleSignOut}>
-          <Button type="submit" variant="outline" size="sm" className="self-start">
-            Se déconnecter
-          </Button>
-        </form>
+        <Link href="/posts/new" className={buttonVariants({ variant: "default", size: "sm" })}>
+          Partager une mise à jour
+        </Link>
       </div>
 
       <section className="space-y-4">
@@ -52,8 +49,13 @@ export default async function FeedPage() {
           </p>
         ) : (
           <div className="space-y-6">
-            {followedFeed.map((artifact) => (
-              <FeedItem key={artifact.id} artifact={artifact} />
+            {followedFeed.map((entry) => (
+              <FeedItem
+                key={entryKey(entry)}
+                entry={entry}
+                viewerId={session.user.id}
+                pathname="/feed"
+              />
             ))}
           </div>
         )}
@@ -69,12 +71,17 @@ export default async function FeedPage() {
             <Link href="/profile/edit" className="underline">
               ton profil
             </Link>
-            {" pour voir des artefacts pertinents ici."}
+            {" pour voir du contenu pertinent ici."}
           </p>
         ) : (
           <div className="space-y-6">
-            {discoveryFeed.map((artifact) => (
-              <FeedItem key={artifact.id} artifact={artifact} />
+            {discoveryFeed.map((entry) => (
+              <FeedItem
+                key={entryKey(entry)}
+                entry={entry}
+                viewerId={session.user.id}
+                pathname="/feed"
+              />
             ))}
           </div>
         )}

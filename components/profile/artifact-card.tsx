@@ -20,6 +20,7 @@ const TYPE_LABELS: Record<ArtifactType, string> = {
 export function ArtifactCard({
   artifact,
   isOwner,
+  hideShare = false,
 }: {
   artifact: {
     id: string;
@@ -32,6 +33,7 @@ export function ArtifactCard({
     verificationToken: string | null;
   };
   isOwner: boolean;
+  hideShare?: boolean;
 }) {
   const deleteWithId = deleteArtifactAction.bind(null, artifact.id);
   const verifyGithubWithId = verifyGithubRepoAction.bind(null, artifact.id);
@@ -72,39 +74,50 @@ export function ArtifactCard({
         </div>
       )}
 
-      {isOwner && (
-        <div className="flex flex-wrap gap-2 pt-1">
+      <div className="flex flex-wrap gap-2 pt-1">
+        {!hideShare && (
           <Link
-            href={`/profile/artifacts/${artifact.id}/edit`}
+            href={`/posts/new?artifactId=${artifact.id}`}
             className={buttonVariants({ variant: "outline", size: "sm" })}
           >
-            Modifier
+            Partager
           </Link>
-          <form action={deleteWithId}>
-            <Button type="submit" variant="outline" size="sm">
-              Supprimer
-            </Button>
-          </form>
+        )}
 
-          {!artifact.verified && artifact.type === ArtifactType.REPO && (
-            <form action={verifyGithubWithId}>
+        {isOwner && (
+          <>
+            <Link
+              href={`/profile/artifacts/${artifact.id}/edit`}
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
+              Modifier
+            </Link>
+            <form action={deleteWithId}>
               <Button type="submit" variant="outline" size="sm">
-                Vérifier via GitHub
+                Supprimer
               </Button>
             </form>
-          )}
 
-          {!artifact.verified &&
-            artifact.type === ArtifactType.PRODUCT &&
-            !artifact.verificationToken && (
-              <form action={startDnsWithId}>
+            {!artifact.verified && artifact.type === ArtifactType.REPO && (
+              <form action={verifyGithubWithId}>
                 <Button type="submit" variant="outline" size="sm">
-                  Vérifier via DNS
+                  Vérifier via GitHub
                 </Button>
               </form>
             )}
-        </div>
-      )}
+
+            {!artifact.verified &&
+              artifact.type === ArtifactType.PRODUCT &&
+              !artifact.verificationToken && (
+                <form action={startDnsWithId}>
+                  <Button type="submit" variant="outline" size="sm">
+                    Vérifier via DNS
+                  </Button>
+                </form>
+              )}
+          </>
+        )}
+      </div>
 
       {isOwner && !artifact.verified && artifact.verificationToken && hostname && (
         <div className="space-y-2 rounded-md border border-dashed p-3 text-sm">

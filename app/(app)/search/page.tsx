@@ -1,6 +1,8 @@
+import Image from "next/image";
+import Link from "next/link";
 import { ArtifactType } from "@prisma/client";
 import { searchArtifacts, searchUsers } from "@/lib/data/search";
-import { FeedItem } from "@/components/feed/feed-item";
+import { ArtifactCard } from "@/components/profile/artifact-card";
 import { ProfileResult } from "@/components/search/profile-result";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -115,7 +117,29 @@ export default async function SearchPage({
             ) : (
               <div className="space-y-6">
                 {artifacts.map((artifact) => (
-                  <FeedItem key={artifact.id} artifact={artifact} />
+                  <div key={artifact.id} className="space-y-2">
+                    <Link
+                      href={`/profile/${artifact.user.handle}`}
+                      className="flex items-center gap-2 text-sm"
+                    >
+                      {artifact.user.image ? (
+                        <Image
+                          src={artifact.user.image}
+                          alt=""
+                          width={24}
+                          height={24}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <span className="bg-muted size-6 rounded-full" />
+                      )}
+                      <span className="font-medium">
+                        {artifact.user.name ?? `@${artifact.user.handle}`}
+                      </span>
+                      <span className="text-muted-foreground">@{artifact.user.handle}</span>
+                    </Link>
+                    <ArtifactCard artifact={artifact} isOwner={false} />
+                  </div>
                 ))}
               </div>
             )}
