@@ -4,3 +4,5 @@ node_modules/
 .vscode/
 .next-dev/
 .wokra/
+.next/
+next-env.d.ts

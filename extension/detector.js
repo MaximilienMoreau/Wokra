@@ -5,15 +5,40 @@
     return String(value || "")
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[’']/g, " ")
       .toLowerCase();
   }
 
   function parseDate(text) {
     const value = normalize(text);
-    const match = value.match(/(\d+)\s*(jour|semaine|mois|an)s?/);
+    if (/\b(aujourd hui|today)\b/.test(value)) return new Date().toISOString();
+    if (/\bhier|yesterday\b/.test(value))
+      return new Date(Date.now() - 86400000).toISOString();
+    const absolute = value.match(/\b(\d{1,2})[\s/-]+(\d{1,2})[\s/-]+(\d{4})\b/);
+    if (absolute) {
+      const date = new Date(Date.UTC(Number(absolute[3]), Number(absolute[2]) - 1, Number(absolute[1])));
+      if (Number.isFinite(date.getTime())) return date.toISOString();
+    }
+    const named = value.match(/\b(\d{1,2})\s+(janvier|fevrier|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|decembre|january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{4})\b/);
+    if (named) {
+      const months = {
+        janvier: 0, fevrier: 1, mars: 2, avril: 3, mai: 4, juin: 5, juillet: 6, aout: 7,
+        septembre: 8, octobre: 9, novembre: 10, decembre: 11, january: 0, february: 1,
+        march: 2, april: 3, may: 4, june: 5, july: 6, august: 7, september: 8, october: 9,
+        november: 10, december: 11,
+      };
+      const date = new Date(Date.UTC(Number(named[3]), months[named[2]], Number(named[1])));
+      if (Number.isFinite(date.getTime())) return date.toISOString();
+    }
+    const match = value.match(/(\d+)\s*\+?\s*(jours?|days?|semaines?|weeks?|mois|months?|ans?|years?)/);
     if (!match) return null;
     const amount = Number(match[1]);
-    const multiplier = { jour: 1, semaine: 7, mois: 30, an: 365 }[match[2]];
+    const multiplier = {
+      jour: 1, jours: 1, day: 1, days: 1,
+      semaine: 7, semaines: 7, week: 7, weeks: 7,
+      mois: 30, month: 30, months: 30,
+      an: 365, ans: 365, year: 365, years: 365,
+    }[match[2]];
     if (!multiplier) return null;
     return new Date(Date.now() - amount * multiplier * 86400000).toISOString();
   }
