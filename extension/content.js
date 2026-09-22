@@ -3,6 +3,14 @@
   const detector = globalThis.WokraDetector;
   const state = { key: location.href.split("?")[0], job: null };
 
+  function updateKey() {
+    const nextKey = globalThis.location.href.split("?")[0];
+    if (nextKey !== state.key) {
+      state.key = nextKey;
+      state.job = null;
+    }
+  }
+
   function text(selector) {
     return document.querySelector(selector)?.textContent?.trim() || "";
   }
@@ -32,6 +40,7 @@
     document.documentElement.appendChild(badge);
   }
   async function analyze() {
+    updateKey();
     const raw = extract();
     const stored = await chrome.storage.local.get(state.key);
     const old = stored[state.key]?.history;
@@ -58,6 +67,7 @@
   setInterval(() => {
     if (location.href !== lastUrl) {
       lastUrl = location.href;
+      updateKey();
       setTimeout(analyze, 900);
     }
   }, 1000);
