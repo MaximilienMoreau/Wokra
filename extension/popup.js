@@ -27,7 +27,13 @@
       return;
     }
     try {
-      render(await chrome.tabs.sendMessage(tab.id, { type: "WOKRA_ANALYZE" }));
+      const result = await chrome.tabs.sendMessage(tab.id, { type: "WOKRA_ANALYZE" });
+      if (result?.error) {
+        status.textContent = result.error;
+        signals.replaceChildren();
+      } else {
+        render(result);
+      }
     } catch {
       status.textContent = "Rechargez l’offre LinkedIn puis réessayez.";
     }
