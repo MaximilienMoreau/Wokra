@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Wokra</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main>
+      <p class="brand">wokra<span>.</span></p>
+      <h1>Analyse de l’offre</h1>
+      <div id="status" aria-live="polite">Analyse en cours…</div>
+      <ul id="signals"></ul>
+      <p class="note">
+        Les indices ne prouvent pas qu’une annonce est fausse. Vérifiez l’offre et demandez au
+        recruteur si le poste, le budget et la date de prise de poste sont confirmés.
+      </p>
+      <button id="reanalyze" type="button">Analyser à nouveau</button
+      ><a href="options.html" target="_blank">Paramètres</a>
+    </main>
+    <script src="detector.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,76 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  width: 340px;
+  background: #10131d;
+  color: #f5f4ef;
+  font:
+    14px/1.45 system-ui,
+    sans-serif;
+}
+main {
+  padding: 20px;
+}
+.brand {
+  margin: 0 0 18px;
+  font-size: 20px;
+  font-weight: 800;
+}
+.brand span {
+  color: #ef8354;
+}
+h1 {
+  font-size: 18px;
+  margin: 0 0 14px;
+}
+#status {
+  border-radius: 10px;
+  background: #272c3b;
+  padding: 12px;
+  font-weight: 700;
+}
+#status[data-level="review"] {
+  color: #ffd38b;
+}
+#status[data-level="multiple"] {
+  color: #ff9d9d;
+}
+#signals {
+  padding: 0;
+  list-style: none;
+}
+#signals li {
+  border-top: 1px solid #34394a;
+  padding: 10px 0;
+}
+#signals strong,
+#signals span {
+  display: block;
+}
+#signals span,
+.note {
+  color: #b8bdca;
+  font-size: 12px;
+}
+.note {
+  margin: 14px 0;
+}
+button {
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  background: #ef8354;
+  color: #18131a;
+  padding: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+a {
+  display: block;
+  color: #b8bdca;
+  margin-top: 12px;
+  text-align: center;
+  font-size: 12px;
+}

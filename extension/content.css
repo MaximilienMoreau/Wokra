@@ -1,0 +1,35 @@
+#wokra-ghost-job-badge {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2147483647;
+  width: 280px;
+  padding: 14px 16px;
+  border: 1px solid #454b60;
+  border-radius: 12px;
+  background: #10131df2;
+  box-shadow: 0 10px 35px #0005;
+  color: #f5f4ef;
+  font:
+    14px/1.4 system-ui,
+    sans-serif;
+}
+#wokra-ghost-job-badge strong,
+#wokra-ghost-job-badge span {
+  display: block;
+}
+#wokra-ghost-job-badge span {
+  margin-top: 5px;
+  color: #b8bdca;
+  font-size: 12px;
+}
+#wokra-ghost-job-badge button {
+  position: absolute;
+  right: 7px;
+  top: 5px;
+  border: 0;
+  background: transparent;
+  color: #b8bdca;
+  font-size: 20px;
+  cursor: pointer;
+}
