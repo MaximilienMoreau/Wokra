@@ -22,7 +22,14 @@
   }
   async function run() {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (!tab?.id || !/linkedin\.com\/jobs\//.test(tab.url || "")) {
+    let isOffer = false;
+    try {
+      const url = new URL(tab?.url || "");
+      isOffer = (url.hostname === "linkedin.com" || url.hostname.endsWith(".linkedin.com")) && /^\/jobs\/view\/[^/]+/.test(url.pathname);
+    } catch {
+      isOffer = false;
+    }
+    if (!tab?.id || !isOffer) {
       render(null);
       return;
     }
