@@ -21,19 +21,22 @@
     );
   }
   async function run() {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    let isOffer = false;
+    signals.replaceChildren();
+    status.textContent = "Analyse en cours…";
+    delete status.dataset.level;
     try {
-      const url = new URL(tab?.url || "");
-      isOffer = (url.hostname === "linkedin.com" || url.hostname.endsWith(".linkedin.com")) && /^\/jobs\/view\/[^/]+/.test(url.pathname);
-    } catch {
-      isOffer = false;
-    }
-    if (!tab?.id || !isOffer) {
-      render(null);
-      return;
-    }
-    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      let isOffer = false;
+      try {
+        const url = new URL(tab?.url || "");
+        isOffer = (url.hostname === "linkedin.com" || url.hostname.endsWith(".linkedin.com")) && /^\/jobs\/view\/[^/]+/.test(url.pathname);
+      } catch {
+        isOffer = false;
+      }
+      if (!tab?.id || !isOffer) {
+        render(null);
+        return;
+      }
       const result = await chrome.tabs.sendMessage(tab.id, { type: "WOKRA_ANALYZE" });
       if (result?.error) {
         status.textContent = result.error;

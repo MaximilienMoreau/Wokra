@@ -85,19 +85,24 @@
     return state.job;
   }
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-    if (message?.type === "WOKRA_ANALYZE")
-      analyze()
-        .then(sendResponse)
-        .catch(() => sendResponse({ error: "Analyse indisponible" }));
+    if (message?.type !== "WOKRA_ANALYZE") return false;
+    analyze()
+      .then(sendResponse)
+      .catch(() => sendResponse({ error: "Analyse indisponible. Rechargez l’offre puis réessayez." }));
     return true;
   });
-  if (isOfferPage()) setTimeout(analyze, 1200);
+  function autoAnalyze() {
+    return analyze().catch(() => {
+      document.getElementById("wokra-ghost-job-badge")?.remove();
+    });
+  }
+  if (isOfferPage()) setTimeout(autoAnalyze, 1200);
   let lastUrl = location.href;
   setInterval(() => {
     if (location.href !== lastUrl) {
       lastUrl = location.href;
       updateKey();
-      setTimeout(analyze, 900);
+      setTimeout(autoAnalyze, 900);
     }
   }, 1000);
 })();

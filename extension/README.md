@@ -11,6 +11,22 @@ Cette extension Manifest V3 fonctionne sur les pages individuelles `linkedin.com
 
 Le même dossier est compatible avec les trois navigateurs basés sur Chromium. Les icônes sont déjà incluses dans `icons/`. Pour publier l’extension, il faudra fournir une politique de confidentialité, préparer les visuels et suivre les exigences propres à chaque store ; aucun build n’est nécessaire pour l’installation locale.
 
+## Vérifier le projet avec npm
+
+Depuis le dossier `extension/`, avec Node.js 22 ou supérieur :
+
+```sh
+npm run check
+npm test
+```
+
+Le `package.json` sert aux vérifications locales, sans dépendances à installer.
+Il n’y a pas de commande `npm run dev` ou de serveur Next.js : le site a été
+remplacé par cette extension. Pour l’exécuter, suivez l’installation locale
+ci-dessus. Après une modification, rechargez l’extension puis l’onglet LinkedIn.
+Une erreur npm `ENOENT` sur `package.json` peut indiquer que la commande a été
+lancée depuis le dossier parent : placez-vous dans `extension/`.
+
 ## Données et permissions
 
 L’extension demande l’accès aux pages LinkedIn Jobs et au stockage local du navigateur. Elle ne fait aucun appel réseau, ne lit pas les autres sites et ne conserve que l’URL normalisée, un résumé d’analyse et l’historique minimal de l’offre. L’historique est dédoublonné par jour, conservé 180 jours au maximum et limité à 500 offres.
