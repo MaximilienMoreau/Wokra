@@ -11,6 +11,11 @@ Wokra est désormais une extension Manifest V3 pour Chrome, Edge et Brave. Elle 
 
 L’extension lit uniquement le descriptif visible d’une offre individuelle, conserve un historique limité dans le stockage local du navigateur et n’envoie pas le contenu à un serveur Wokra. Les résultats indiquent des points à vérifier ; ils ne prouvent jamais qu’une annonce est fausse.
 
-Le badge apparaît automatiquement sur les pages `/jobs/view/`. L’icône de l’extension ouvre le détail et relance l’analyse. Aucun build n’est nécessaire pour l’installation locale.
+Le badge apparaît automatiquement sur les pages `/jobs/view/` une fois le descriptif disponible, y compris après une navigation interne LinkedIn. L’icône de l’extension ouvre le détail et relance l’analyse. Aucun build n’est nécessaire pour l’installation locale.
 
 Voir [extension/README.md](extension/README.md) pour le fonctionnement et les limites.
+
+Depuis `extension/`, lancer `npm run check`, `npm test` et `npm run package`
+pour vérifier les sources et générer le ZIP de distribution dans `dist/`
+(Python 3 nécessaire pour le paquet). Les clés privées et CRX ne sont plus
+versionnés ; voir les précautions de signature dans la documentation de l’extension.
