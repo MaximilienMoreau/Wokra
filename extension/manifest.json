@@ -1,10 +1,17 @@
 {
   "manifest_version": 3,
   "name": "Wokra Ghost Job Detector",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Analyse les signaux publics d’une offre LinkedIn potentiellement fantôme.",
-  "permissions": ["storage", "activeTab"],
-  "host_permissions": ["https://www.linkedin.com/*", "https://*.linkedin.com/*"],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://www.linkedin.com/*",
+    "https://*.linkedin.com/*"
+  ],
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
@@ -17,11 +24,22 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.linkedin.com/jobs/view/*", "https://*.linkedin.com/jobs/view/*"],
-      "js": ["detector.js", "content.js"],
-      "css": ["content.css"],
+      "matches": [
+        "https://www.linkedin.com/*",
+        "https://*.linkedin.com/*"
+      ],
+      "js": [
+        "detector.js",
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
       "run_at": "document_idle"
     }
   ],
-  "options_page": "options.html"
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js"
+  }
 }

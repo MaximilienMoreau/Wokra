@@ -29,7 +29,7 @@
       let isOffer = false;
       try {
         const url = new URL(tab?.url || "");
-        isOffer = (url.hostname === "linkedin.com" || url.hostname.endsWith(".linkedin.com")) && /^\/jobs\/view\/[^/]+/.test(url.pathname);
+        isOffer = Boolean(globalThis.WokraDetector.canonicalUrl(url.href));
       } catch {
         isOffer = false;
       }

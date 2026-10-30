@@ -6,3 +6,8 @@ node_modules/
 .wokra/
 .next/
 next-env.d.ts
+
+# Signing keys and generated extension packages
+*.pem
+*.crx
+dist/
